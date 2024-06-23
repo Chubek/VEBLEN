@@ -88,6 +88,11 @@ struct INTER_Symtab {
 struct INTER_Application {
   struct INTER_Expr *subj;
   struct INTER_Expr *obj;
+
+  enum {
+    REL_Surjective,
+    REL_Injective,
+  } rel;
 };
 
 struct INTER_Abstraction {
