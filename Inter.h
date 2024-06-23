@@ -23,6 +23,20 @@ struct INTER_String {
   struct INTER_String *next;
 };
 
+struct INTER_Type {
+  struct INTER_String *name;
+
+  enum {
+    TYPE_Product,
+    TYPE_Sum,
+  } kind;
+
+  union {
+    struct INTER_ProdType *v_product;
+    struct INTER_SumType *v_sum;
+  };
+};
+
 struct INTER_Expr {
   enum {
     EXP_Constant,
