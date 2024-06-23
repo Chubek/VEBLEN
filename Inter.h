@@ -16,6 +16,13 @@
 #define INTER_REALLOC(mem, nn) __inter_heap_realloc(mem, nn)
 #define INTER_FREE(mem) __inter_heap_free(mem)
 
+struct INTER_String {
+    uint8_t *buffer;
+    size_t buf_length;
+
+    struct INTER_String *next;
+};
+
 struct INTER_Expr {
    enum {
 	EXP_Constant,
@@ -24,11 +31,9 @@ struct INTER_Expr {
 	EXP_Abstraction,
 	EXP_Let,
 	EXP_Letrec,
-	EXP_LetIn,
 	EXP_Infix,
 	EXP_Case,
 	EXP_Pattern,
-	EXP_Cons,
    } kind;
 
    union {
@@ -44,10 +49,14 @@ struct INTER_Expr {
 	struct INTER_Pattern *v_pattern;
 	struct INTER_Cons *v_cons;
    };
+
+   struct INTER_Expr *next;
 };
 
 struct INTER_Const {
    uint8_t repr[MAX_CONST_REPR + 1];
+   struct INTER_Symtab **static_link;
+
    enum {
 	CNR_Number,
 	CNR_String,
@@ -61,6 +70,69 @@ struct INTER_Const {
 struct INTER_Variable {
     uint8_t repr[MAX_VARIABLE_REPR + 1];
     struct INTER_Symtab **static_link;
+
+    enum {
+	VAR_Function,
+	VAR_Constructor,
+    } kind;
+};
+
+
+struct INTER_Symtab {
+       uintmax_t key_hash;
+       struct INTER_String *key;
+       struct INTER_String *value;
+
+       struct INTER_Symtab *next;
+};
+
+struct INTER_Application {
+	struct INTER_Expr *subj;
+	struct INTER_Expr *obj;
+};
+
+struct INTER_Abstraction {
+	struct INTER_Pattern *patt;
+	struct INTER_Expr *abs;
+};
+
+struct INTER_Let {
+	struct INTER_Pattern *rhs;
+	struct INTER_Expr *lhs;
+	struct INTER_Expr *in;
+
+	struct INTER_Let *next;
+};
+
+struct INTER_LetRec {
+	struct INTER_Let *lets;
+	size_t num_lets;
+	struct INTER_Let *in;
+};
+
+struct INTER_Infix {
+	struct INTER_Expr *left;
+	struct INTER_Expr *right;
+	struct INTER_String *fatbar;
+};
+
+struct INTER_Case {
+	struct INTER_Variable *discrim;
+	struct INTER_Pattern *patts;
+	size_t num_patts;
+};
+
+struct INTER_Pattern {
+	enum {
+		PATT_Const,
+		PATT_Variable,
+		PATT_Cons,
+	} kind;
+
+	struct INTER_Expr *expr1;
+	struct INTER_Expr *expr2;
+
+	struct INTER_Pattern *next;
 };
 
 #endif
