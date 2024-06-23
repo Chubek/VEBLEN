@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Strapper.h"
+#include "Veblen.h"
 
 struct VM_String;
 struct VM_Value;
