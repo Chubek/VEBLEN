@@ -19,6 +19,21 @@
 #define INTER_Member INTER_Variant
 #define INTER_Ident INTER_String
 
+struct INTER_String;
+struct INTER_Type;
+struct INTER_Exrp;
+struct INTER_Const;
+struct INTER_Variable;
+struct INTER_Abstraction;
+struct INTER_Application;
+struct INTER_Let;
+struct INTER_Letrec;
+struct INTER_Case;
+struct INTER_Pattern;
+struct INTER_SumType;
+struct INTER_ProdType;
+struct INTER_Variant;
+
 struct INTER_String {
   uint8_t *buffer;
   size_t buf_length;
@@ -62,7 +77,7 @@ struct INTER_Expr {
     struct INTER_Application *v_application;
     struct INTER_Abstraction *v_abstraction;
     struct INTER_Let *v_let;
-    struct INTER_LetRec *v_letrec;
+    struct INTER_Letrec *v_letrec;
     struct INTER_LetIn *v_letin;
     struct INTER_Infix *v_infix;
     struct INTER_Case *v_case;
@@ -78,12 +93,14 @@ struct INTER_Const {
   struct INTER_Symtab **static_link;
 
   enum {
-    CNR_Number,
-    CNR_String,
-    CNR_Operator,
-    CNR_Intrin,
-    CNR_Ident,
-    /* TODO: Add more */
+    CONST_Number,
+    CONST_String,
+    CONST_Operator,
+    CONST_Intrin,
+    CONST_Ident,
+    CONST_Tuple,
+    CONST_List,
+    CONST_Map,
   } kind;
 };
 
@@ -128,7 +145,7 @@ struct INTER_Let {
   struct INTER_Let *next;
 };
 
-struct INTER_LetRec {
+struct INTER_Letrec {
   struct INTER_Let *lets;
   size_t num_lets;
   struct INTER_Let *in;
