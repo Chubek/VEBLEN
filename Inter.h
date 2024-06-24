@@ -25,15 +25,20 @@ struct INTER_String {
 
 struct INTER_Type {
   struct INTER_String *name;
+  struct INTER_Symtab **static_link;
 
   enum {
     TYPE_Product,
     TYPE_Sum,
+    TYPE_Builtin,
+    TYPE_Poly,
   } kind;
 
   union {
     struct INTER_ProdType *v_product;
     struct INTER_SumType *v_sum;
+    struct INTER_BuiltinType *v_builtin;
+    struct INTER_String *v_poly;
   };
 };
 
@@ -151,6 +156,26 @@ struct INTER_Pattern {
   struct INTER_Expr *expr2;
 
   struct INTER_Pattern *next;
+};
+
+struct INTER_SumType {
+  ssize_t cons_arity;
+  ssize_t poly_arity;
+
+  struct INTER_Variant *variants;
+};
+
+struct INTER_ProdType {
+  ssize_t memb_num;
+
+  struct INTER_Variant *members;
+};
+
+struct INTER_Variant {
+  struct INTER_String *name;
+  struct INTER_Type *value;
+
+  struct INTER_Variant *next;
 };
 
 #endif
