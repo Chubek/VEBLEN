@@ -16,6 +16,9 @@
 #define INTER_REALLOC(mem, nn) __inter_heap_realloc(mem, nn)
 #define INTER_FREE(mem) __inter_heap_free(mem)
 
+#define INTER_Member INTER_Variant
+#define INTER_Ident INTER_String
+
 struct INTER_String {
   uint8_t *buffer;
   size_t buf_length;
@@ -24,21 +27,19 @@ struct INTER_String {
 };
 
 struct INTER_Type {
-  struct INTER_String *name;
+  struct INTER_Ident *name;
   struct INTER_Symtab **static_link;
 
   enum {
     TYPE_Product,
     TYPE_Sum,
-    TYPE_Builtin,
-    TYPE_Poly,
+    TYPE_Variable,
   } kind;
 
   union {
     struct INTER_ProdType *v_product;
     struct INTER_SumType *v_sum;
-    struct INTER_BuiltinType *v_builtin;
-    struct INTER_String *v_poly;
+    struct INTER_String *v_variable;
   };
 };
 
@@ -66,9 +67,9 @@ struct INTER_Expr {
     struct INTER_Infix *v_infix;
     struct INTER_Case *v_case;
     struct INTER_Pattern *v_pattern;
-    struct INTER_Cons *v_cons;
   };
 
+  struct INTER_Type *repr_type;
   struct INTER_Expr *next;
 };
 
@@ -168,11 +169,11 @@ struct INTER_SumType {
 struct INTER_ProdType {
   ssize_t memb_num;
 
-  struct INTER_Variant *members;
+  struct INTER_Member *members;
 };
 
 struct INTER_Variant {
-  struct INTER_String *name;
+  struct INTER_Ident *name;
   struct INTER_Type *value;
 
   struct INTER_Variant *next;
