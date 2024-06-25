@@ -11,6 +11,14 @@
 
 #include "Veblen.h"
 
+/* The following must be preprocessed with AllocPPx.pl */
+
+/*!(alloc-pp __machine_heap)!*/
+
+#define MACHINE_ALLOC(n) __machine_heap_alloc_notrace(n)
+#define MACHINE_REALLOC(mem, nn) __machine_heap_realloc(mem, nn)
+#define MACHINE_FREE(mem) __machine_heap_free(mem)
+
 struct VM_String;
 struct VM_Value;
 struct VM_ConstPool;

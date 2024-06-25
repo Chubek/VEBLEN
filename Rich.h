@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "Veblen.h"
+
 /* The following needs to be preprocessed with AllocPPx.pl */
 
 /*!(alloc-pp __inter_heap)!*/
