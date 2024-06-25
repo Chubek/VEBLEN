@@ -4,6 +4,8 @@ So far it is pretty easy to do so --- there aren't many *stuff* here yet! Just a
 
 [VEBLEN.ebnf](VEBLEN.ebnf) would be containing the grammar specs in EBNF notation. 
 
+[Machine.h](Machine.h) includes declarations about the machine (see: *A Portable Implemenation Platform for non-strict Functional Programming Languages*, Jansen et. al).
+
 [Inter.h](Inter.h) includes Peyton Jones' *enriched* Lambda calculus declarations (see: University of London College, 1987).
 
 [Ord.h](Ord.h) would include S-Expressions (note: It's for **ordinary** Lambda calc, VEBLEN itself is not LISP-like!)
