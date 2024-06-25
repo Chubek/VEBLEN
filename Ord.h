@@ -53,6 +53,7 @@ struct ORD_Expr {
     struct ORD_Application *v_application;
   };
 
+  bool is_normal;
   struct ORD_Expr *next;
 };
 
@@ -89,6 +90,7 @@ struct ORD_Abstraction {
     ABS_Eta,
   } kind;
 
+  bool is_normal;
   struct ORD_Application *subject;
   struct ORD_Composite *object;
 };
