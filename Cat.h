@@ -23,6 +23,17 @@
 #define CAT_Key CAT_Repr
 #define CAT_Item CAT_Variant
 
+struct CAT_Repr;
+struct CAT_Symtab;
+struct CAT_Type;
+struct CAT_Product;
+struct CAT_Tuple;
+struct CAT_List;
+struct CAT_Record;
+struct CAT_Sum;
+struct CAT_Variant;
+struct CAT_Functor;
+
 struct CAT_Repr {
   uint8_t *buffer;
   size_t buf_length;
@@ -46,12 +57,14 @@ struct CAT_Type {
   enum {
     ADT_Sum,
     ADT_Product,
+    ADT_Functor,
     ADT_Variable,
   } kind;
 
   union {
     struct CAT_Sum *v_sum;
     struct CAT_Product *v_product;
+    struct CAT_Functor *v_functor;
     struct CAT_Variable *v_variable;
   };
 
@@ -108,6 +121,12 @@ struct CAT_Variant {
   struct CAT_Type *value;
 
   struct CAT_Variant *next;
+};
+
+struct CAT_Functor {
+  size_t num_data;
+  struct CAT_Type *data;
+  void (*transformer_fn)(void *);
 };
 
 #endif /* Cat.h */
