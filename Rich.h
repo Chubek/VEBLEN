@@ -1,5 +1,5 @@
-#ifndef INTER_H
-#define INTER_H
+#ifndef RICH_H
+#define RICH_H
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -12,38 +12,38 @@
 
 /*!(alloc-pp __inter_heap)!*/
 
-#define INTER_ALLOC(n) __inter_heap_alloc_notrace(n)
-#define INTER_REALLOC(mem, nn) __inter_heap_realloc(mem, nn)
-#define INTER_FREE(mem) __inter_heap_free(mem)
+#define RICH_ALLOC(n) __inter_heap_alloc_notrace(n)
+#define RICH_REALLOC(mem, nn) __inter_heap_realloc(mem, nn)
+#define RICH_FREE(mem) __inter_heap_free(mem)
 
-#define INTER_Member INTER_Variant
-#define INTER_Ident INTER_String
+#define RICH_Member RICH_Variant
+#define RICH_Ident RICH_String
 
-struct INTER_String;
-struct INTER_Type;
-struct INTER_Exrp;
-struct INTER_Const;
-struct INTER_Variable;
-struct INTER_Abstraction;
-struct INTER_Application;
-struct INTER_Let;
-struct INTER_Letrec;
-struct INTER_Case;
-struct INTER_Pattern;
-struct INTER_SumType;
-struct INTER_ProdType;
-struct INTER_Variant;
+struct RICH_String;
+struct RICH_Type;
+struct RICH_Exrp;
+struct RICH_Const;
+struct RICH_Variable;
+struct RICH_Abstraction;
+struct RICH_Application;
+struct RICH_Let;
+struct RICH_Letrec;
+struct RICH_Case;
+struct RICH_Pattern;
+struct RICH_SumType;
+struct RICH_ProdType;
+struct RICH_Variant;
 
-struct INTER_String {
+struct RICH_String {
   uint8_t *buffer;
   size_t buf_length;
 
-  struct INTER_String *next;
+  struct RICH_String *next;
 };
 
-struct INTER_Type {
-  struct INTER_Ident *name;
-  struct INTER_Symtab **static_link;
+struct RICH_Type {
+  struct RICH_Ident *name;
+  struct RICH_Symtab **static_link;
 
   enum {
     TYPE_Product,
@@ -52,13 +52,13 @@ struct INTER_Type {
   } kind;
 
   union {
-    struct INTER_ProdType *v_product;
-    struct INTER_SumType *v_sum;
-    struct INTER_String *v_variable;
+    struct RICH_ProdType *v_product;
+    struct RICH_SumType *v_sum;
+    struct RICH_String *v_variable;
   };
 };
 
-struct INTER_Expr {
+struct RICH_Expr {
   enum {
     EXP_Constant,
     EXP_Variable,
@@ -72,25 +72,25 @@ struct INTER_Expr {
   } kind;
 
   union {
-    struct INTER_Const *v_const;
-    struct INTER_Variable *v_variable;
-    struct INTER_Application *v_application;
-    struct INTER_Abstraction *v_abstraction;
-    struct INTER_Let *v_let;
-    struct INTER_Letrec *v_letrec;
-    struct INTER_LetIn *v_letin;
-    struct INTER_Infix *v_infix;
-    struct INTER_Case *v_case;
-    struct INTER_Pattern *v_pattern;
+    struct RICH_Const *v_const;
+    struct RICH_Variable *v_variable;
+    struct RICH_Application *v_application;
+    struct RICH_Abstraction *v_abstraction;
+    struct RICH_Let *v_let;
+    struct RICH_Letrec *v_letrec;
+    struct RICH_LetIn *v_letin;
+    struct RICH_Infix *v_infix;
+    struct RICH_Case *v_case;
+    struct RICH_Pattern *v_pattern;
   };
 
-  struct INTER_Type *repr_type;
-  struct INTER_Expr *next;
+  struct RICH_Type *repr_type;
+  struct RICH_Expr *next;
 };
 
-struct INTER_Const {
+struct RICH_Const {
   uint8_t repr[MAX_CONST_REPR + 1];
-  struct INTER_Symtab **static_link;
+  struct RICH_Symtab **static_link;
 
   enum {
     CONST_Number,
@@ -104,9 +104,9 @@ struct INTER_Const {
   } kind;
 };
 
-struct INTER_Variable {
+struct RICH_Variable {
   uint8_t repr[MAX_VARIABLE_REPR + 1];
-  struct INTER_Symtab **static_link;
+  struct RICH_Symtab **static_link;
 
   enum {
     VAR_Function,
@@ -114,17 +114,17 @@ struct INTER_Variable {
   } kind;
 };
 
-struct INTER_Symtab {
+struct RICH_Symtab {
   uintmax_t key_hash;
-  struct INTER_String *key;
-  struct INTER_String *value;
+  struct RICH_String *key;
+  struct RICH_String *value;
 
-  struct INTER_Symtab *next;
+  struct RICH_Symtab *next;
 };
 
-struct INTER_Application {
-  struct INTER_Expr *subj;
-  struct INTER_Expr *obj;
+struct RICH_Application {
+  struct RICH_Expr *subj;
+  struct RICH_Expr *obj;
 
   enum {
     REL_Surjective,
@@ -132,68 +132,68 @@ struct INTER_Application {
   } rel;
 };
 
-struct INTER_Abstraction {
-  struct INTER_Pattern *patt;
-  struct INTER_Expr *abs;
+struct RICH_Abstraction {
+  struct RICH_Pattern *patt;
+  struct RICH_Expr *abs;
 };
 
-struct INTER_Let {
-  struct INTER_Pattern *rhs;
-  struct INTER_Expr *lhs;
-  struct INTER_Expr *in;
+struct RICH_Let {
+  struct RICH_Pattern *rhs;
+  struct RICH_Expr *lhs;
+  struct RICH_Expr *in;
 
-  struct INTER_Let *next;
+  struct RICH_Let *next;
 };
 
-struct INTER_Letrec {
-  struct INTER_Let *lets;
+struct RICH_Letrec {
+  struct RICH_Let *lets;
   size_t num_lets;
-  struct INTER_Let *in;
+  struct RICH_Let *in;
 };
 
-struct INTER_Infix {
-  struct INTER_Expr *left;
-  struct INTER_Expr *right;
-  struct INTER_String *fatbar;
+struct RICH_Infix {
+  struct RICH_Expr *left;
+  struct RICH_Expr *right;
+  struct RICH_String *fatbar;
 };
 
-struct INTER_Case {
-  struct INTER_Variable *discrim;
-  struct INTER_Pattern *patts;
+struct RICH_Case {
+  struct RICH_Variable *discrim;
+  struct RICH_Pattern *patts;
   size_t num_patts;
 };
 
-struct INTER_Pattern {
+struct RICH_Pattern {
   enum {
     PATT_Const,
     PATT_Variable,
     PATT_Cons,
   } kind;
 
-  struct INTER_Expr *expr1;
-  struct INTER_Expr *expr2;
+  struct RICH_Expr *expr1;
+  struct RICH_Expr *expr2;
 
-  struct INTER_Pattern *next;
+  struct RICH_Pattern *next;
 };
 
-struct INTER_SumType {
+struct RICH_SumType {
   ssize_t cons_arity;
   ssize_t poly_arity;
 
-  struct INTER_Variant *variants;
+  struct RICH_Variant *variants;
 };
 
-struct INTER_ProdType {
+struct RICH_ProdType {
   ssize_t memb_num;
 
-  struct INTER_Member *members;
+  struct RICH_Member *members;
 };
 
-struct INTER_Variant {
-  struct INTER_Ident *name;
-  struct INTER_Type *value;
+struct RICH_Variant {
+  struct RICH_Ident *name;
+  struct RICH_Type *value;
 
-  struct INTER_Variant *next;
+  struct RICH_Variant *next;
 };
 
 #endif
