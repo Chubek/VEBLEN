@@ -21,6 +21,7 @@
 #define ORD_Key ORD_Repr
 #define ORD_Tag ORD_Repr
 #define ORD_Ident ORD_Repr
+#define ORD_Item ORD_Atom
 
 struct ORD_Repr {
   uint8_t *buffer;
@@ -39,6 +40,9 @@ struct ORD_Symtab {
 };
 
 struct ORD_Expr {
+  struct ORD_Ident *name;
+  struct ORD_Symtab **static_link;
+
   enum {
     ORDXP_Atom,
     ORDXP_Composite,
@@ -75,12 +79,12 @@ struct ORD_Atom {
 struct ORD_Composite {
   size_t arity;
   bool is_body;
-  struct ORD_Atom *items;
+  struct ORD_Item *items;
 };
 
 struct ORD_Application {
   struct ORD_Atom *arguments;
-  struct ORD_Composite *body;
+  struct ORD_Expr *body;
 };
 
 struct ORD_Abstraction {
@@ -90,9 +94,14 @@ struct ORD_Abstraction {
     ABS_Eta,
   } kind;
 
-  bool is_normal;
-  struct ORD_Application *subject;
-  struct ORD_Composite *object;
+  enum {
+    REDEX_Normal,
+    REDEX_Reduction,
+    REDEX_Conversion,
+  } state;
+
+  struct ORD_Expr *subject;
+  struct ORD_Expr *object;
 };
 
 #endif
