@@ -1,9 +1,30 @@
 # Grammar for VEBLEN functional language
 
-identifier		::= identifier-lead { identifier-lead | decimal-digit } [ '?' ]
+## Syntactic Concerns
+
+
+
+## Lexical Concerns
+
+constructor-name	::= constructor-name-lead { constructor-name-tail }
 			 ;
 
-identifier-lead		::= "'" | '_' | letter
+constructor-name-tail	::= constructor-name-lead | decimal-digit
+			 ;
+
+constructor-name-lead	::= ( upper | '_' ) { letter }
+			 ;
+
+type-variable-name	::= "'" ( variable-name - '?' )
+			 ;
+
+variable-name		::= variable-name-lead { variable-name-tail } [ '?' ]
+			 ;
+
+variable-name-tail	::= variable-name-lead | decimal-digit
+			 ;
+
+variable-name-lead	::= '_' | letter
 			 ;
 
 literal-value           ::= integer-literal
