@@ -1,0 +1,92 @@
+# Grammar for VEBLEN functional language
+
+identifier		::= identifier-lead { identifier-lead | decimal-digit } [ '?' ]
+			 ;
+
+identifier-lead		::= "'" | '_' | letter
+			 ;
+
+literal-value           ::= integer-literal
+                         | string-literal
+                         | character-literal
+                         | float-literal
+			 | rational-literal
+			 ;
+
+retional-literal	::= decimal-integer '/' decimal-integer
+			 ;
+
+float-literal           ::= decimal-integer '.' decimal-integer
+			 ;
+
+character-literal       ::= '#\"' ( c-escape-sequence | no-newline ) '"'
+			 ;
+
+c-escape-sequence       ::=  ( hex-escape | unicode-escape | c-escape-chars )
+			 ;
+
+hex-escape              ::= 'x' hex-digit [ hex-digit ]
+			 ;
+
+unicode-escape          ::= "U+" hex-digit [ hex-digit [ hex-digit [ hex-digit ] ] ]
+		         ;
+
+c-escape-chars          ::=  'a' | 'b'
+                         | 'e' | 'f'
+                         | 'n' | 'r'
+                         | 't' | 'v'
+                         | "'" | '"'
+	  	         ;
+
+string-literal          ::= '"' { no-double-quote } '"'
+		         ;
+
+integer-literal         ::= decimal-integer
+                         | octal-integer
+                         | hexadecimal-integer
+                         | decimal-integer
+			 ;
+
+binary-integer          ::= binary-digit { binary-digit } 'B'
+		 	 ;
+
+octal-integer           ::= octal-digit { octal-digit } 'O'
+			 ;
+
+hexadecimal-integer     ::= hexadecimal-digit { hexadecimal-digit } 'H'
+			 ;
+
+decimal-integer         ::= decimal-digit { decimal-digit }
+			 ;
+
+binary-digit            ::= '0' | '1'
+			 ;
+			 
+octal-digit             ::= '0' | '1' | ... | '7'
+			 ;
+
+hexadecimal-digit       ::= decimal-digit | 'A' | ... | 'F' | 'a' | ... | 'f'
+			 ;
+
+decimal-digit           ::= '0' | '1' | ... | '8' | '9'
+			 ;
+
+letter			::= upper-case | lower-case
+			 ;
+
+lower-case              ::= 'a' | 'b' | ... | 'y' | 'z'
+			 ;
+
+upper-case              ::= 'A' | 'B' | ... | 'Y' | 'Z'
+			 ;
+
+no-double-quote         ::= ? any-UTF8-character-except-double-quote ?
+			 ;
+			 
+no-newline              ::= ? any-UTF8-character-except-newline ?
+			 ;
+
+any-char                ::= ? any-UTF8-character ?
+			 ;
+
+
