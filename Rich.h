@@ -20,7 +20,6 @@
 #define RICH_Ident RICH_Repr
 
 struct RICH_Repr;
-struct RICH_Type;
 struct RICH_Exrp;
 struct RICH_Const;
 struct RICH_Variable;
@@ -30,32 +29,12 @@ struct RICH_Let;
 struct RICH_Letrec;
 struct RICH_Case;
 struct RICH_Pattern;
-struct RICH_SumType;
-struct RICH_ProdType;
-struct RICH_Variant;
 
 struct RICH_Repr {
   uint8_t *buffer;
   size_t buf_length;
 
   struct RICH_Repr *next;
-};
-
-struct RICH_Type {
-  struct RICH_Ident *name;
-  struct RICH_Symtab **static_link;
-
-  enum {
-    TYPE_Product,
-    TYPE_Sum,
-    TYPE_Variable,
-  } kind;
-
-  union {
-    struct RICH_ProdType *v_product;
-    struct RICH_SumType *v_sum;
-    struct RICH_Repr *v_variable;
-  };
 };
 
 struct RICH_Expr {
@@ -84,7 +63,6 @@ struct RICH_Expr {
     struct RICH_Pattern *v_pattern;
   };
 
-  struct RICH_Type *repr_type;
   struct RICH_Expr *next;
 };
 
@@ -176,24 +154,4 @@ struct RICH_Pattern {
   struct RICH_Pattern *next;
 };
 
-struct RICH_SumType {
-  ssize_t cons_arity;
-  ssize_t poly_arity;
-
-  struct RICH_Variant *variants;
-};
-
-struct RICH_ProdType {
-  ssize_t memb_num;
-
-  struct RICH_Member *members;
-};
-
-struct RICH_Variant {
-  struct RICH_Ident *name;
-  struct RICH_Type *value;
-
-  struct RICH_Variant *next;
-};
-
-#endif
+#endif /* Rich.h */
