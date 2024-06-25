@@ -18,7 +18,7 @@ struct VM_Semispace;
 struct VM_ValueStack;
 struct VM_ControlStack;
 struct VM_InstStream;
-struct VM_Interp;
+struct VM_Richp;
 
 enum VM_Opcode;
 
@@ -189,7 +189,7 @@ struct VM_Frame {
   struct VM_Frame *next;
 };
 
-struct VM_Interp {
+struct VM_Richp {
   FILE *bytecode_source;
   struct VM_Frame *frames;
   size_t num_frames;
