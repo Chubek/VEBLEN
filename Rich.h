@@ -17,9 +17,9 @@
 #define RICH_FREE(mem) __inter_heap_free(mem)
 
 #define RICH_Member RICH_Variant
-#define RICH_Ident RICH_String
+#define RICH_Ident RICH_Repr
 
-struct RICH_String;
+struct RICH_Repr;
 struct RICH_Type;
 struct RICH_Exrp;
 struct RICH_Const;
@@ -34,11 +34,11 @@ struct RICH_SumType;
 struct RICH_ProdType;
 struct RICH_Variant;
 
-struct RICH_String {
+struct RICH_Repr {
   uint8_t *buffer;
   size_t buf_length;
 
-  struct RICH_String *next;
+  struct RICH_Repr *next;
 };
 
 struct RICH_Type {
@@ -54,7 +54,7 @@ struct RICH_Type {
   union {
     struct RICH_ProdType *v_product;
     struct RICH_SumType *v_sum;
-    struct RICH_String *v_variable;
+    struct RICH_Repr *v_variable;
   };
 };
 
@@ -116,8 +116,8 @@ struct RICH_Variable {
 
 struct RICH_Symtab {
   uintmax_t key_hash;
-  struct RICH_String *key;
-  struct RICH_String *value;
+  struct RICH_Repr *key;
+  struct RICH_Repr *value;
 
   struct RICH_Symtab *next;
 };
@@ -154,7 +154,7 @@ struct RICH_Letrec {
 struct RICH_Infix {
   struct RICH_Expr *left;
   struct RICH_Expr *right;
-  struct RICH_String *fatbar;
+  struct RICH_Repr *fatbar;
 };
 
 struct RICH_Case {
