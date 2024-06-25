@@ -10,6 +10,14 @@
 
 #include "Veblen.h"
 
+/* The following must be preprocessed with AllocPPx.pl */
+
+/*!(alloc-pp __token_heap)!*/
+
+#define TOKEN_ALLOC(n) __token_heap_alloc_notrace(n)
+#define TOKEN_REALLOC(mem, nn) __token_heap_realloc(mem, nn)
+#define TOKEN_FREE(mem) __token_heap_free(mem)
+
 struct TOKEN_Repr;
 struct TOKEN_Meta;
 struct TOKEN_Integer;
