@@ -41,15 +41,15 @@ struct RICH_Repr {
 
 struct RICH_Expr {
   enum {
-    EXP_Constant,
-    EXP_Variable,
-    EXP_Application,
-    EXP_Abstraction,
-    EXP_Let,
-    EXP_Letrec,
-    EXP_Infix,
-    EXP_Case,
-    EXP_Pattern,
+    RICHXP_Constant,
+    RICHXP_Variable,
+    RICHXP_Application,
+    RICHXP_Abstraction,
+    RICHXP_Let,
+    RICHXP_Letrec,
+    RICHXP_Infix,
+    RICHXP_Case,
+    RICHXP_Pattern,
   } kind;
 
   union {
