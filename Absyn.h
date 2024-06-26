@@ -18,111 +18,90 @@
 #define ABSYN_REALLOC(mem, nn) __absyn_heap_realloc(mem, nn)
 #define ABSYN_FREE(mem) __absyn_heap_free(mem)
 
-struct AST_String;
-struct AST_Literal;
-struct AST_Postfix;
-struct AST_Prefix;
-struct AST_Infix;
-struct AST_Expr;
-struct AST_Tag;
-struct AST_Binding;
+#define ABSYN_String ABSYN_Repr
+#define ABSYN_Ident ABSYN_Repr
+#define ABSYN_Char ABSYN_Repr
 
-struct AST_String {
+struct ABSYN_Repr {
   uint8_t *buffer;
   size_t buf_length;
 
-  struct AST_String *next;
+  struct ABSYN_Repr *next;
 };
 
-struct AST_Literal {
+struct ABSYN_Node {
   enum {
-    LIT_Integer,
-    LIT_Real,
-    LIT_Char,
-    LIT_String,
-    LIT_List,
-    LIT_Map,
-    LIT_TrainCase,
-    LIT_PascalCase,
-  } kind;
-
-  struct AST_String *values;
-  size_t num_values;
-};
-
-struct AST_Prefix {
-  enum {
-    PREFIX_Plus,
-    PREFIX_Minus,
-    PREFIX_BitwiseNot,
-    PREFIX_LogicalNot,
-  } kind;
-
-  struct AST_Expr *value;
-};
-
-struct AST_Postfix {
-  enum {
-    POSTFIX_Call,
-    POSTFIX_Access,
-    POSTFIX_Index,
-  } kind;
-
-  struct AST_Expr *value;
-};
-
-struct AST_Infix {
-  enum {
-    INFIX_Add,
-    INFIX_Sub,
-    INFIX_Mul,
-    INFIX_Div,
-    INFIX_Mod,
-    INFIX_Shr,
-    INFIX_Shl,
-    INFIX_Eq,
-    INFIX_Ne,
-    INFIX_Gt,
-    INFIX_Ge,
-    INFIX_Lt,
-    INFIX_Le,
-  } kind;
-
-  struct AST_Expr *left;
-  struct AST_Expr *right;
-};
-
-struct AST_Expr {
-  enum {
-    EXPR_Postfix,
-    EXPR_Prefix,
-    EXPR_Infix,
-    EXPR_Literal,
+    NODE_Numberic,
+    NODE_String,
+    NODE_Char,
+    NODE_List,
+    NODE_Tuple,
+    NODE_Name,
+    NODE_Expr,
   } kind;
 
   union {
-    struct AST_Postfix *v_postfix;
-    struct AST_Prefix *v_prefix;
-    struct AST_Infix *v_infix;
-    struct AST_Literal *v_literal;
+    struct ABSYN_Numeric *v_numeric;
+    struct ABSYN_String *v_string;
+    struct ABSYN_Char *v_char;
+    struct ABSYN_List *v_list;
+    struct ABSYN_Tuple *v_tuple;
+    struct ABSYN_Name *v_name;
+    struct ABSYN_Expr *v_expr;
   };
 
-  struct AST_Expr *next;
-  struct AST_Tag *tag;
+  struct ABSYN_Node *next;
 };
 
-struct AST_Binding {
+struct ABSYN_Numeric {
   enum {
-    BINDING_Func,
-    BINDING_Type,
+    NUMERIC_Integer,
+    NUMERIC_Real,
   } kind;
 
-  struct AST_Expr *binding;
+  union {
+    intmax_t v_integer;
+    long double v_real;
+  };
 };
 
-struct AST_Tag {
-  size_t line_num;
-  /* TODO: Add control flow, semantics, etc */
+struct ABSYN_List {
+  enum {
+    LIST_Normal,
+    LIST_Comprehension,
+  } kind;
+
+  size_t num_items;
+  struct ABSYN_Node *head;
+  struct ABSYN_Node *items;
+};
+
+struct ABSYN_Tuple {
+  enum {
+    TUPLE_Unit,
+    TUPLE_Normal,
+  } kind;
+
+  struct ABSYN_Node *v1;
+  struct ABSYN_Node *v2;
+};
+
+struct ABSYN_Name {
+  enum {
+    NAME_Unbound,
+    NAME_Bound,
+    NAME_Typebound,
+  } kind;
+
+  struct ABSYN_Ident *value;
+};
+
+struct ABSYN_Expr {
+  enum {
+    EXPR_Unary,
+    EXPR_Binary,
+    EXPR_Cond,
+  } kind;
 };
 
 #endif /* Absyn.h */
