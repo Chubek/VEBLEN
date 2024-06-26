@@ -23,6 +23,31 @@
 #define ABSYN_Char ABSYN_Repr
 #define ABSYN_Type ABSYN_Repr
 #define ABSYN_Operator ABSYN_Repr
+#define ABSYN_ProductItem ABSYN_Variant
+
+struct ABSYN_Repr;
+struct ABSYN_Node;
+struct ABSYN_Numeric;
+struct ABSYN_List;
+struct ABSYN_Tuple;
+struct ABSYN_Name;
+struct ABSYN_Expr;
+struct ABSYN_UnaryExpr;
+struct ABSYN_BinaryExpr;
+struct ABSYN_CondExpr;
+struct ABSYN_LoopExpr;
+struct ABSYN_LetExpr;
+struct ABSYN_MatchExpr;
+struct ABSYN_FuncExpr;
+struct ABSYN_Adt;
+struct ABSYN_SumAdt;
+struct ABSYN_Variant;
+struct ABSYN_ProductAdt;
+struct ABSYN_Module;
+struct ABSYN_Mapping;
+struct ABSYN_Pattern;
+struct ABSYN_Signature;
+struct ABSYN_Value;
 
 struct ABSYN_Repr {
   uint8_t *buffer;
@@ -147,7 +172,7 @@ struct ABSYN_CondExpr {
   struct ABSYN_Expr *body;
 };
 
-struct ABSYN_Loop {
+struct ABSYN_LoopExpr {
   struct ABSYN_Repr *subject;
   struct ABSYN_Repr *object;
   struct ABSYN_Expr *body;
@@ -171,9 +196,35 @@ struct ABSYN_FuncExpr {
 };
 
 struct ABSYN_Adt {
-  struct ABSYN_Name *name;
-  struct ABSYN_Name *polies;
-  struct ABSYN_Name *values;
+  enum {
+    ADT_Product,
+    ADT_Sum,
+  } kind;
+
+  union {
+    struct ABSYN_SumAdt *v_sum;
+    struct ABSYN_ProductAdt *v_product;
+  };
+
+  struct ABSYN_Ident *name;
+};
+
+struct ABSYN_SumAdt {
+  size_t arity;
+  struct ABSYN_Ident *name;
+  struct ABSYN_Variant *variants;
+};
+
+struct ABSYN_Variant {
+  struct ABSYN_Ident *name;
+  struct ABSYN_Name *value;
+
+  struct ABSYN_Variant *next;
+};
+
+struct ABSYN_ProductAdt {
+  size_t num_item;
+  struct ABSYN_ProductItem *items;
 };
 
 struct ABSYN_Pattern {
@@ -183,7 +234,26 @@ struct ABSYN_Pattern {
 
 struct ABSYN_Module {
   size_t arity;
-  struct ABSYN_Value *values;
+  struct ABSYN_Ident *name;
+  struct ABSYN_Value *decl_values;
+
+  struct ABSYN_Module *next;
+};
+
+struct ABSYN_Mapping {
+  enum {
+    MAP_Iso,
+    MAP_Epi,
+    MAP_Hom,
+    MAP_Functor,
+    MAP_Injective,
+    MAP_Bijective,
+    MAP_Surjective,
+    MAP_Curry,
+  } kind;
+
+  struct ABSYN_Repr *from;
+  struct ABSYN_Repr *to;
 };
 
 struct ABSYN_Value {
@@ -192,8 +262,9 @@ struct ABSYN_Value {
 };
 
 struct ABSYN_Signature {
-  struct ABSYN_Type *curries;
-  struct ABSYN_Type *result;
+  size_t arity;
+  struct ABSYN_Mapping *mappins;
+  struct ABSYN_Repr *result;
 };
 
 #endif /* Absyn.h */
