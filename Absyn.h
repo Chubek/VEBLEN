@@ -38,6 +38,11 @@ struct ABSYN_Node {
     NODE_Tuple,
     NODE_Name,
     NODE_Expr,
+    NODE_Adt,
+    NODE_Pattern,
+    NODE_Module,
+    NODE_Signature,
+    NODE_Value,
   } kind;
 
   union {
@@ -48,6 +53,11 @@ struct ABSYN_Node {
     struct ABSYN_Tuple *v_tuple;
     struct ABSYN_Name *v_name;
     struct ABSYN_Expr *v_expr;
+    struct ABSYN_Adt *v_adt;
+    struct ABSYN_Pattern *v_pattern;
+    struct ABSYN_Module *v_module;
+    struct ABSYN_Signature *v_signature;
+    struct ABSYN_Value *v_value;
   };
 
   struct ABSYN_Node *next;
@@ -88,12 +98,13 @@ struct ABSYN_Tuple {
 
 struct ABSYN_Name {
   enum {
-    NAME_Unbound,
-    NAME_Bound,
-    NAME_Typebound,
+    NAME_Terminal,
+    NAME_Constructor,
+    NAME_Typevar,
   } kind;
 
   struct ABSYN_Ident *value;
+  struct ABSYN_Name *next;
 };
 
 struct ABSYN_Expr {
@@ -101,7 +112,47 @@ struct ABSYN_Expr {
     EXPR_Unary,
     EXPR_Binary,
     EXPR_Cond,
+    EXPR_Loop,
+    EXPR_Let,
+    EXPR_Match,
+    EXPR_Func,
   } kind;
+
+  union {
+    struct ABSYN_UnaryExpr *v_unary;
+    struct ABSYN_BinaryExpr *v_binary;
+    struct ABSYN_CondExpr *v_cond;
+    struct ABSYN_LoopExpr *v_loop;
+    struct ABSYN_LetExpr *v_let;
+    struct ABSYN_MatchExpr *v_match;
+    struct ABSYN_FuncExpr *v_func;
+  };
+};
+
+struct ABSYN_Adt {
+  struct ABSYN_Name *name;
+  struct ABSYN_Name *polies;
+  struct ABSYN_Name *values;
+};
+
+struct ABSYN_Pattern {
+  struct ABSYN_Name *constructor;
+  struct ABSYN_Expr *discriminators;
+};
+
+struct ABSYN_Module {
+  size_t arity;
+  struct ABSYN_Value *values;
+};
+
+struct ABSYN_Value {
+  struct ABSYN_Name *name;
+  struct ABSYN_Signature *signature;
+};
+
+struct ABSYN_Signature {
+  struct ABSYN_Repr *curries;
+  struct ABSYN_Repr *result;
 };
 
 #endif /* Absyn.h */
