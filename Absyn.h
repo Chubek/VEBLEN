@@ -21,6 +21,8 @@
 #define ABSYN_String ABSYN_Repr
 #define ABSYN_Ident ABSYN_Repr
 #define ABSYN_Char ABSYN_Repr
+#define ABSYN_Type ABSYN_Repr
+#define ABSYN_Operator ABSYN_Repr
 
 struct ABSYN_Repr {
   uint8_t *buffer;
@@ -129,6 +131,45 @@ struct ABSYN_Expr {
   };
 };
 
+struct ABSYN_UnaryExpr {
+  struct ABSYN_Operator *operation;
+  struct ABSYN_Expr *monad;
+};
+
+struct ABSYN_BinaryExpr {
+  struct ABSYN_Operator *operation;
+  struct ABSYN_Expr *left;
+  struct ABSYN_Expr *right;
+};
+
+struct ABSYN_CondExpr {
+  struct ABSYN_Expr *discriminant;
+  struct ABSYN_Expr *body;
+};
+
+struct ABSYN_Loop {
+  struct ABSYN_Repr *subject;
+  struct ABSYN_Repr *object;
+  struct ABSYN_Expr *body;
+};
+
+struct ABSYN_LetExpr {
+  bool is_fixed_point;
+  struct ABSYN_Ident *name;
+  struct ABSYN_Pattern *lhs_patterns;
+  struct ABSYN_Expr *rhs_expr;
+};
+
+struct ABSYN_MatchExpr {
+  struct ABSYN_Ident *dscriminant;
+  struct ABSYN_Expr *body;
+};
+
+struct ABSYN_FuncExpr {
+  struct ABSYN_Expr *lhs;
+  struct ABSYN_Expr *rhs;
+};
+
 struct ABSYN_Adt {
   struct ABSYN_Name *name;
   struct ABSYN_Name *polies;
@@ -151,8 +192,8 @@ struct ABSYN_Value {
 };
 
 struct ABSYN_Signature {
-  struct ABSYN_Repr *curries;
-  struct ABSYN_Repr *result;
+  struct ABSYN_Type *curries;
+  struct ABSYN_Type *result;
 };
 
 #endif /* Absyn.h */
