@@ -2,30 +2,44 @@
 
 ## Syntactic Concerns
 
+terminal-value		::= literal-value
+			 | long-accessor
+			 | indexed-accessor
+			 ;
 
+indexed-accessor	::= decorated-name { '.' access-index }
+			 ;
 
+long-accessor		::= decorated-name { '.' decorated-name }
+			 ;
 
 ## Lexical Concerns
 
-constructor-name	::= constructor-name-lead { constructor-name-tail }
+access-index		::= '[' terminal-value ']'
 			 ;
 
-constructor-name-tail	::= constructor-name-lead | decimal-digit
+decorated-name		::= ( '^' | '!' ) free-name
 			 ;
 
-constructor-name-lead	::= ( upper | '_' ) { letter }
+bound-name		::= bound-name-lead { bound-name-tail }
 			 ;
 
-type-variable-name	::= "'" ( variable-name - '?' )
+bound-name-tail		::= bound-name-lead | decimal-digit
 			 ;
 
-variable-name		::= variable-name-lead { variable-name-tail } [ '?' ]
+bound-name-lead		::= ( upper | '_' ) { letter }
 			 ;
 
-variable-name-tail	::= variable-name-lead | decimal-digit
+type-bound-name		::= "'" ( free-name - '?' )
 			 ;
 
-variable-name-lead	::= '_' | letter
+free-name		::= free-name-lead { free-name-tail } [ '?' ]
+			 ;
+
+free-name-tail		::= free-name-lead | decimal-digit
+			 ;
+
+free-name-lead		::= '_' | letter
 			 ;
 
 literal-value           ::= integer-literal
