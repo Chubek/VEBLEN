@@ -161,7 +161,7 @@ void cat_type_delete(struct CAT_Type *v) {
   struct CAT_Type *current = v;
   while (current != NULL) {
     struct CAT_Type *next = current->next;
-    TOKEN_FREE(current);
+    CAT_FREE(current);
     current = next;
   }
 }
