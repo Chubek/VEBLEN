@@ -140,7 +140,7 @@ struct TOKEN_Meta *token_meta_new_symbol_punct(struct TOKEN_Repr *v);
 struct TOKEN_Meta *token_meta_append(struct TOKEN_Meta **head,
 					struct TOKEN_Meta *append);
 void token_meta_iter(struct TOKEN_Meta *head,
-					void (*iter_fn)(void*));
+					void (*iter_fn)(struct TOKEN_Meta*));
 void token_meta_delete(struct TOKEN_Meta *v);
 
 #endif
