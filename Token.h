@@ -26,6 +26,23 @@ struct TOKEN_Text;
 struct TOKEN_Ident;
 struct TOKEN_Punct;
 
+struct TOKEN_Repr {
+  uint8_t *buffer;
+  size_t buf_length;
+
+  struct TOKEN_Repr *next;
+};
+
+struct TOKEN_Repr *token_repr_create(uint8_t *buffer, size_t buf_length);
+struct TOKEN_Repr *token_repr_concat(struct TOKEN_Repr *repr1,
+					struct TOKEN_Repr *repr2);
+struct TOKNE_Repr *token_repr_append(struct TOKEN_Repr **head,
+					struct TOKEN_Repr *append);
+void token_repr_iter(struct TOKEN_Repr *head, 
+					void (*iter_fn)(void*));
+void token_repr_print(struct TOKEN_Repr *repr);
+void token_repr_delete(struct TOKEN_Repr *repr);
+
 struct TOKEN_Meta {
   enum {
     TOK_Integer,
@@ -46,13 +63,6 @@ struct TOKEN_Meta {
   size_t line_at;
   size_t word_at;
   struct TOKEN_Meta *next;
-};
-
-struct TOKEN_Repr {
-  uint8_t *buffer;
-  size_t buf_length;
-
-  struct TOKEN_Repr *next;
 };
 
 struct TOKEN_Integer {
@@ -105,5 +115,32 @@ struct TOKEN_Punct {
 
   struct TOKEN_Repr *repr;
 };
+
+struct TOKEN_Meta *token_meta_new_dec_integer(struct TOKEN_Repr *v);
+struct TOKEN_Meta *token_meta_new_hex_integer(struct TOKEN_Repr *v);
+struct TOKEN_Meta *token_meta_new_oct_integer(struct TOKEN_Repr *v);
+struct TOKEN_Meta *token_meta_new_bin_integer(struct TOKEN_Repr *v);
+
+struct TOKEN_Meta *token_meta_new_float_real(struct TOKEN_Repr *v);
+struct TOKEN_Meta *token_meta_new_rational_real(struct TOKEN_Repr *v);
+
+struct TOKEN_Meta *token_meta_new_char_text(struct TOKEN_Repr *v);
+struct TOKEN_Meta *token_meta_new_string_text(struct TOKEN_Repr *v);
+struct TOKEN_Meta *token_meta_new_utf8_string_text(struct TOKEN_Repr *v);
+
+struct TOKEN_Meta *token_meta_new_apostrofixed_ident(struct TOKEN_Repr *v);
+struct TOKEN_Meta *token_meta_new_pascalcase_ident(struct TOKEN_Repr *v);
+struct TOKEN_Meta *token_meta_new_traincase_ident(struct TOKEN_Repr *v);
+struct TOKEN_Meta *token_meta_new_keyword_ident(struct TOKEN_Repr *v);
+struct TOKEN_Meta *token_meta_new_long_ident(struct TOKEN_Repr *v);
+
+struct TOKEN_Meta *token_meta_new_operator_punct(struct TOKEN_Repr *v);
+struct TOKEN_Meta *token_meta_new_symbol_punct(struct TOKEN_Repr *v);
+
+struct TOKEN_Meta *token_meta_append(struct TOKEN_Meta **head,
+					struct TOKEN_Meta *append);
+void token_meta_iter(struct TOKEN_Meta *head,
+					void (*iter_fn)(void*));
+void token_meta_delete(struct TOKEN_Meta *v);
 
 #endif
