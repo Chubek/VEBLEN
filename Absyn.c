@@ -768,3 +768,38 @@ struct ABSYN_Value *new_absyn_value(struct ABSYN_Name *name,
 
   return value;
 }
+
+struct ABSYN_Node *token_meta_append(struct ABSYN_Node **head,
+                                     struct ABSYN_Node *append) {
+  if (*head == NULL) {
+    *head = append;
+    return *head;
+  }
+
+  struct ABSYN_Node *current = *head;
+  while (current->next != NULL) {
+    current = current->next;
+  }
+
+  current->next = append;
+  return *head;
+}
+
+void token_meta_iter(struct ABSYN_Node *head,
+                     void (*iter_fn)(struct ABSYN_Node *)) {
+  struct ABSYN_Node *current = head;
+  while (current != NULL) {
+    iter_fn(current);
+    current = current->next;
+  }
+}
+
+void token_meta_delete(struct ABSYN_Node *v) {
+  struct ABSYN_Node *current = v;
+  while (current != NULL) {
+    struct ABSYN_Node *next = current->next;
+    TOKEN_FREE(current);
+    current = next;
+  }
+}
+
