@@ -56,6 +56,15 @@ struct ABSYN_Repr {
   struct ABSYN_Repr *next;
 };
 
+struct ABSYN_Repr *absyn_repr_create(uint8_t *buffer, size_t buf_length);
+struct ABSYN_Repr *absyn_repr_concat(struct ABSYN_Repr *repr1,
+                                     struct ABSYN_Repr *repr2);
+struct TOKNE_Repr *absyn_repr_append(struct ABSYN_Repr **head,
+                                     struct ABSYN_Repr *append);
+void absyn_repr_iter(struct ABSYN_Repr *head, void (*iter_fn)(void *));
+void absyn_repr_print(struct ABSYN_Repr *repr);
+void absyn_repr_delete(struct ABSYN_Repr *repr);
+
 struct ABSYN_Node {
   enum {
     NODE_Numberic,
@@ -266,5 +275,112 @@ struct ABSYN_Signature {
   struct ABSYN_Mapping *mappins;
   struct ABSYN_Repr *result;
 };
+
+struct ABSYN_Node *new_absyn_node_numeric_integer(intmax_t v);
+struct ABSYN_Node *new_absyn_node_numeric_real(long double v);
+struct ABSYN_Node *new_absyn_node_string(struct ABSYN_Repr *v);
+struct ABSYN_Node *new_absyn_node_char(struct ABSYN_Repr *v);
+struct ABSYN_Node *new_absyn_node_list_normal(size_t num_items,
+                                              struct ABSYN_Node *head,
+                                              struct ABSYN_Node *items);
+struct ABSYN_Node *new_absyn_node_list_comprehension(size_t num_items,
+                                                     struct ABSYN_Node *head,
+                                                     struct ABSYN_Node *items);
+struct ABSYN_Node *new_absyn_node_tuple_unit(struct ABSYN_Node *v1);
+struct ABSYN_Node *new_absyn_node_tuple_normal(struct ABSYN_Node *v1,
+                                               struct ABSYN_Node *v2);
+struct ABSYN_Node *new_absyn_node_name_terminal(struct ABSYN_Ident *value);
+struct ABSYN_Node *new_absyn_node_name_constructor(struct ABSYN_Ident *value);
+struct ABSYN_Node *new_absyn_node_name_typevar(struct ABSYN_Ident *value);
+struct ABSYN_Node *new_absyn_node_expr_unary(struct ABSYN_UnaryExpr *v);
+struct ABSYN_Node *new_absyn_node_expr_binary(struct ABSYN_BinaryExpr *v);
+struct ABSYN_Node *new_absyn_node_expr_cond(struct ABSYN_CondExpr *v);
+struct ABSYN_Node *new_absyn_node_expr_loop(struct ABSYN_LoopExpr *v);
+struct ABSYN_Node *new_absyn_node_expr_let(bool is_fixed_point,
+                                           struct ABSYN_Ident *name,
+                                           struct ABSYN_Pattern *lhs_patterns,
+                                           struct ABSYN_Expr *rhs_expr);
+struct ABSYN_Node *new_absyn_node_expr_match(struct ABSYN_Ident *discriminant,
+                                             struct ABSYN_Expr *body);
+struct ABSYN_Node *new_absyn_node_expr_func(struct ABSYN_Expr *lhs,
+                                            struct ABSYN_Expr *rhs);
+struct ABSYN_Node *
+new_absyn_node_adt_product(struct ABSYN_ProductAdt *v_product,
+                           struct ABSYN_Ident *name);
+struct ABSYN_Node *new_absyn_node_adt_sum(struct ABSYN_SumAdt *v_sum,
+                                          struct ABSYN_Ident *name);
+struct ABSYN_Node *new_absyn_node_pattern(struct ABSYN_Name *constructor,
+                                          struct ABSYN_Expr *discriminators);
+struct ABSYN_Node *new_absyn_node_module(size_t arity, struct ABSYN_Ident *name,
+                                         struct ABSYN_Value *decl_values);
+struct ABSYN_Node *new_absyn_node_signature(size_t arity,
+                                            struct ABSYN_Mapping *mappings,
+                                            struct ABSYN_Repr *result);
+
+struct ABSYN_Numeric *new_absyn_numeric_integer(intmax_t v);
+struct ABSYN_Numeric *new_absyn_numeric_real(long double v);
+struct ABSYN_List *new_absyn_list_normal(size_t num_items,
+                                         struct ABSYN_Node *head,
+                                         struct ABSYN_Node *items);
+struct ABSYN_List *new_absyn_list_comprehension(size_t num_items,
+                                                struct ABSYN_Node *head,
+                                                struct ABSYN_Node *items);
+struct ABSYN_Tuple *new_absyn_tuple_unit(struct ABSYN_Node *v1);
+struct ABSYN_Tuple *new_absyn_tuple_normal(struct ABSYN_Node *v1,
+                                           struct ABSYN_Node *v2);
+struct ABSYN_Name *new_absyn_name_terminal(struct ABSYN_Ident *value);
+struct ABSYN_Name *new_absyn_name_constructor(struct ABSYN_Ident *value);
+struct ABSYN_Name *new_absyn_name_typevar(struct ABSYN_Ident *value);
+struct ABSYN_Expr *new_absyn_expr_unary(struct ABSYN_UnaryExpr *v);
+struct ABSYN_Expr *new_absyn_expr_binary(struct ABSYN_BinaryExpr *v);
+struct ABSYN_Expr *new_absyn_expr_cond(struct ABSYN_CondExpr *v);
+struct ABSYN_Expr *new_absyn_expr_loop(struct ABSYN_LoopExpr *v);
+struct ABSYN_Expr *new_absyn_expr_let(bool is_fixed_point,
+                                      struct ABSYN_Ident *name,
+                                      struct ABSYN_Pattern *lhs_patterns,
+                                      struct ABSYN_Expr *rhs_expr);
+struct ABSYN_Expr *new_absyn_expr_match(struct ABSYN_Ident *discriminant,
+                                        struct ABSYN_Expr *body);
+struct ABSYN_Expr *new_absyn_expr_func(struct ABSYN_Expr *lhs,
+                                       struct ABSYN_Expr *rhs);
+
+struct ABSYN_UnaryExpr *new_absyn_unary_expr(struct ABSYN_Operator *operation,
+                                             struct ABSYN_Expr *monad);
+struct ABSYN_BinaryExpr *new_absyn_binary_expr(struct ABSYN_Operator *operation,
+                                               struct ABSYN_Expr *left,
+                                               struct ABSYN_Expr *right);
+struct ABSYN_CondExpr *new_absyn_cond_expr(struct ABSYN_Expr *discriminant,
+                                           struct ABSYN_Expr *body);
+struct ABSYN_LoopExpr *new_absyn_loop_expr(struct ABSYN_Repr *subject,
+                                           struct ABSYN_Repr *object,
+                                           struct ABSYN_Expr *body);
+struct ABSYN_LetExpr *new_absyn_let_expr(bool is_fixed_point,
+                                         struct ABSYN_Ident *name,
+                                         struct ABSYN_Pattern *lhs_patterns,
+                                         struct ABSYN_Expr *rhs_expr);
+
+struct ABSYN_Adt *new_absyn_adt_product(struct ABSYN_ProductAdt *v_product,
+                                        struct ABSYN_Ident *name);
+struct ABSYN_Adt *new_absyn_adt_sum(struct ABSYN_SumAdt *v_sum,
+                                    struct ABSYN_Ident *name);
+
+struct ABSYN_SumAdt *new_absyn_sum_adt(size_t arity, struct ABSYN_Ident *name,
+                                       struct ABSYN_Variant *variants);
+
+struct ABSYN_ProductAdt *new_absyn_product_adt(size_t num_item,
+                                               struct ABSYN_ProductItem *items);
+
+struct ABSYN_Pattern *new_absyn_pattern(struct ABSYN_Name *constructor,
+                                        struct ABSYN_Expr *discriminators);
+
+struct ABSYN_Module *new_absyn_module(size_t arity, struct ABSYN_Ident *name,
+                                      struct ABSYN_Value *decl_values);
+
+struct ABSYN_Value *new_absyn_value(struct ABSYN_Name *name,
+                                    struct ABSYN_Signature *signature);
+
+struct ABSYN_Signature *new_absyn_signature(size_t arity,
+                                            struct ABSYN_Mapping *mappings,
+                                            struct ABSYN_Repr *result);
 
 #endif /* Absyn.h */
