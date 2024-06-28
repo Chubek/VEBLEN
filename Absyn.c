@@ -1,5 +1,76 @@
 #include "Absyn.h"
 
+struct ABSYN_Repr *absyn_repr_create(uint8_t *buffer, size_t buf_length) {
+  struct ABSYN_Repr *repr = ABSYN_ALLOC(sizeof(struct ABSYN_Repr));
+  if (repr == NULL) {
+    return NULL;
+  }
+
+  repr->buffer = buffer;
+  repr->buf_length = buf_length;
+  repr->next = NULL;
+
+  return repr;
+}
+
+struct ABSYN_Repr *absyn_repr_concat(struct ABSYN_Repr *repr1,
+                                     struct ABSYN_Repr *repr2) {
+  size_t total_length = repr1->buf_length + repr2->buf_length;
+  uint8_t *new_buffer = (uint8_t *)ABSYN_ALLOC(total_length);
+  if (new_buffer == NULL) {
+    return NULL;
+  }
+
+  memcpy(new_buffer, repr1->buffer, repr1->buf_length);
+  memcpy(new_buffer + repr1->buf_length, repr2->buffer, repr2->buf_length);
+
+  struct ABSYN_Repr *concatenated = absyn_repr_create(new_buffer, total_length);
+  if (concatenated == NULL) {
+    ABSYN_FREE(new_buffer);
+    return NULL;
+  }
+
+  return concatenated;
+}
+
+struct ABSYN_Repr *absyn_repr_append(struct ABSYN_Repr **head,
+                                     struct ABSYN_Repr *append) {
+  if (*head == NULL) {
+    *head = append;
+    return *head;
+  }
+
+  struct ABSYN_Repr *current = *head;
+  while (current->next != NULL) {
+    current = current->next;
+  }
+
+  current->next = append;
+  return *head;
+}
+
+void absyn_repr_iter(struct ABSYN_Repr *head, void (*iter_fn)(void *)) {
+  struct ABSYN_Repr *current = head;
+  while (current != NULL) {
+    iter_fn(current->buffer);
+    current = current->next;
+  }
+}
+
+void absyn_repr_print(struct ABSYN_Repr *repr) {
+  printf("%.*s", (int)repr->buf_length, repr->buffer);
+}
+
+void absyn_repr_delete(struct ABSYN_Repr *repr) {
+  struct ABSYN_Repr *current = repr;
+  while (current != NULL) {
+    struct ABSYN_Repr *next = current->next;
+    ABSYN_FREE(current->buffer);
+    ABSYN_FREE(current);
+    current = next;
+  }
+}
+
 struct ABSYN_Node *new_absyn_node_numeric_integer(intmax_t v) {
   struct ABSYN_Node *node = ABSYN_ALLOC(sizeof(struct ABSYN_Node));
   if (node == NULL) {
