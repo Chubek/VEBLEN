@@ -61,8 +61,8 @@ struct ABSYN_Repr *absyn_repr_concat(struct ABSYN_Repr *repr1,
                                      struct ABSYN_Repr *repr2);
 struct TOKNE_Repr *absyn_repr_append(struct ABSYN_Repr **head,
                                      struct ABSYN_Repr *append);
-void absyn_repr_iter(struct ABSYN_Repr *head, 
-				     void (*iter_fn)(struct ABSYN_Repr*));
+void absyn_repr_iter(struct ABSYN_Repr *head,
+                     void (*iter_fn)(struct ABSYN_Repr *));
 void absyn_repr_print(struct ABSYN_Repr *repr);
 void absyn_repr_delete(struct ABSYN_Repr *repr);
 
@@ -383,5 +383,11 @@ struct ABSYN_Value *new_absyn_value(struct ABSYN_Name *name,
 struct ABSYN_Signature *new_absyn_signature(size_t arity,
                                             struct ABSYN_Mapping *mappings,
                                             struct ABSYN_Repr *result);
+
+struct ABSYN_Node *absyn_node_append(struct ABSYN_Node **head,
+                                     struct ABSYN_Node *append);
+void absyn_node_iter(struct ABSYN_Node *head,
+                     void (*iter_fn)(struct ABSYN_Node *));
+void absyn_node_delete(struct ABSYN_Node *v);
 
 #endif /* Absyn.h */

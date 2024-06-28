@@ -35,11 +35,11 @@ struct TOKEN_Repr {
 
 struct TOKEN_Repr *token_repr_create(uint8_t *buffer, size_t buf_length);
 struct TOKEN_Repr *token_repr_concat(struct TOKEN_Repr *repr1,
-					struct TOKEN_Repr *repr2);
+                                     struct TOKEN_Repr *repr2);
 struct TOKNE_Repr *token_repr_append(struct TOKEN_Repr **head,
-					struct TOKEN_Repr *append);
-void token_repr_iter(struct TOKEN_Repr *head, 
-					void (*iter_fn)(struct TOKEN_Repr*));
+                                     struct TOKEN_Repr *append);
+void token_repr_iter(struct TOKEN_Repr *head,
+                     void (*iter_fn)(struct TOKEN_Repr *));
 void token_repr_print(struct TOKEN_Repr *repr);
 void token_repr_delete(struct TOKEN_Repr *repr);
 
@@ -138,9 +138,9 @@ struct TOKEN_Meta *token_meta_new_operator_punct(struct TOKEN_Repr *v);
 struct TOKEN_Meta *token_meta_new_symbol_punct(struct TOKEN_Repr *v);
 
 struct TOKEN_Meta *token_meta_append(struct TOKEN_Meta **head,
-					struct TOKEN_Meta *append);
+                                     struct TOKEN_Meta *append);
 void token_meta_iter(struct TOKEN_Meta *head,
-					void (*iter_fn)(struct TOKEN_Meta*));
+                     void (*iter_fn)(struct TOKEN_Meta *));
 void token_meta_delete(struct TOKEN_Meta *v);
 
 #endif
