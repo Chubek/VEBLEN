@@ -39,7 +39,7 @@ struct TOKEN_Repr *token_repr_concat(struct TOKEN_Repr *repr1,
 struct TOKNE_Repr *token_repr_append(struct TOKEN_Repr **head,
 					struct TOKEN_Repr *append);
 void token_repr_iter(struct TOKEN_Repr *head, 
-					void (*iter_fn)(void*));
+					void (*iter_fn)(struct TOKEN_Repr*));
 void token_repr_print(struct TOKEN_Repr *repr);
 void token_repr_delete(struct TOKEN_Repr *repr);
 

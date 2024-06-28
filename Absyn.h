@@ -61,7 +61,8 @@ struct ABSYN_Repr *absyn_repr_concat(struct ABSYN_Repr *repr1,
                                      struct ABSYN_Repr *repr2);
 struct TOKNE_Repr *absyn_repr_append(struct ABSYN_Repr **head,
                                      struct ABSYN_Repr *append);
-void absyn_repr_iter(struct ABSYN_Repr *head, void (*iter_fn)(void *));
+void absyn_repr_iter(struct ABSYN_Repr *head, 
+				     void (*iter_fn)(struct ABSYN_Repr*));
 void absyn_repr_print(struct ABSYN_Repr *repr);
 void absyn_repr_delete(struct ABSYN_Repr *repr);
 
