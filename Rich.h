@@ -39,6 +39,16 @@ struct RICH_Repr {
   struct RICH_Repr *next;
 };
 
+struct RICH_Repr *rich_repr_create(uint8_t *buffer, size_t buf_length);
+struct RICH_Repr *rich_repr_concat(struct RICH_Repr *repr1,
+                                   struct RICH_Repr *repr2);
+struct TOKNE_Repr *rich_repr_append(struct RICH_Repr **head,
+                                    struct RICH_Repr *append);
+void rich_repr_iter(struct RICH_Repr *head,
+                    void (*iter_fn)(struct RICH_Repr *));
+void rich_repr_print(struct RICH_Repr *repr);
+void rich_repr_delete(struct RICH_Repr *repr);
+
 struct RICH_Expr {
   enum {
     RICHXP_Constant,
@@ -59,7 +69,6 @@ struct RICH_Expr {
     struct RICH_Abstraction *v_abstraction;
     struct RICH_Let *v_let;
     struct RICH_Letrec *v_letrec;
-    struct RICH_LetIn *v_letin;
     struct RICH_Infix *v_infix;
     struct RICH_Case *v_case;
     struct RICH_Pattern *v_pattern;
@@ -68,10 +77,23 @@ struct RICH_Expr {
   struct RICH_Expr *next;
 };
 
-struct RICH_Const {
-  uint8_t repr[MAX_CONST_REPR + 1];
-  struct RICH_Symtab **static_link;
+struct RICH_Expr *new_rich_expr_constant(struct RICH_Const *v);
+struct RICH_Expr *new_rich_expr_variable(struct RICH_Variable *v);
+struct RICH_Expr *new_rich_expr_application(struct RICH_Application *v);
+struct RICH_Expr *new_rich_expr_abstraction(struct RICH_Abstrction *v);
+struct RICH_Expr *new_rich_expr_let(struct RICH_Let *v);
+struct RICH_Expr *new_rich_expr_letrec(struct RICH_Letrec *v);
+struct RICH_Expr *new_rich_expr_infix(struct RICH_Infix *v);
+struct RICH_Expr *new_rich_expr_case(struct RICH_Case *v);
+struct RICH_Expr *new_rich_expr_pattern(struct RICH_Pattern *v);
 
+struct RICH_Expr *rich_expr_append(struct RICH_Expr **head,
+                                   struct RICH_Expr *append);
+void rich_expr_iter(struct RICH_Expr *head,
+                    void (*iter_fn)(struct RICH_Expr *));
+void rich_expr_delete(struct RICH_Expr *v);
+
+struct RICH_Const {
   enum {
     CONST_Number,
     CONST_String,
@@ -82,25 +104,30 @@ struct RICH_Const {
     CONST_List,
     CONST_Map,
   } kind;
+
+  struct RICH_Repr *repr;
 };
 
-struct RICH_Variable {
-  uint8_t repr[MAX_VARIABLE_REPR + 1];
-  struct RICH_Symtab **static_link;
+struct RICH_Const *new_rich_const_number(struct RICH_Repr *repr);
+struct RICH_Const *new_rich_const_string(struct RICH_Repr *repr);
+struct RICH_Const *new_rich_const_operator(struct RICH_Repr *repr);
+struct RICH_Const *new_rich_const_intric(struct RICH_Repr *repr);
+struct RICH_Const *new_rich_const_ident(struct RICH_Repr *repr);
+struct RICH_Const *new_rich_const_tuple(struct RICH_Repr *repr);
+struct RICH_Const *new_rich_const_list(struct RICH_Repr *repr);
+struct RICH_Const *new_rich_const_map(struct RICH_Repr *repr);
 
+struct RICH_Variable {
   enum {
     VAR_Function,
     VAR_Constructor,
   } kind;
+
+  struct RICH_Repr *repr;
 };
 
-struct RICH_Symtab {
-  uintmax_t key_hash;
-  struct RICH_Repr *key;
-  struct RICH_Repr *value;
-
-  struct RICH_Symtab *next;
-};
+struct RICH_Variable *new_rich_variable_function(struct RICH_Repr *repr);
+struct RICH_Variable *new_rich_variable_constructor(struct RICH_Repr *repr);
 
 struct RICH_Application {
   struct RICH_Expr *subj;
