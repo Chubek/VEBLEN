@@ -24,7 +24,6 @@
 #define CAT_Item CAT_Variant
 
 struct CAT_Repr;
-struct CAT_Symtab;
 struct CAT_Type;
 struct CAT_Product;
 struct CAT_Tuple;
@@ -41,18 +40,17 @@ struct CAT_Repr {
   struct CAT_Repr *next;
 };
 
-struct CAT_Symtab {
-  uint64_t cat_hash;
-
-  struct CAT_Key *key;
-  struct CAT_Type *value;
-
-  struct CAT_Symtab *next;
-};
+struct CAT_Repr *cat_repr_create(uint8_t *buffer, size_t buf_length);
+struct CAT_Repr *cat_repr_concat(struct CAT_Repr *repr1,
+                                 struct CAT_Repr *repr2);
+struct TOKNE_Repr *cat_repr_append(struct CAT_Repr **head,
+                                   struct CAT_Repr *append);
+void cat_repr_iter(struct CAT_Repr *head, void (*iter_fn)(struct CAT_Repr *));
+void cat_repr_print(struct CAT_Repr *repr);
+void cat_repr_delete(struct CAT_Repr *repr);
 
 struct CAT_Type {
   struct CAT_Ident *name;
-  struct CAT_Symtab **static_link;
 
   enum {
     ADT_Sum,
@@ -71,6 +69,16 @@ struct CAT_Type {
   struct CAT_Type *next;
 };
 
+struct CAT_Type *new_cat_type_sum(struct CAT_Sum *v);
+struct CAT_Type *new_cat_type_product(struct CAT_Product *v);
+struct CAT_Type *new_cat_Type_functor(struct CAT_Functor *v);
+struct CAT_Type *new_cat_type_variable(struct CAT_Variable *v);
+
+struct CAT_Type *cat_type_append(struct CAT_Type **head,
+                                 struct CAT_Type *append);
+void cat_type_iter(struct CAT_Type *head, void (*iter_fn)(struct CAT_Type *));
+void cat_type_delete(struct CAT_Type *v);
+
 struct CAT_Product {
   enum {
     PROD_Tuple,
@@ -87,6 +95,11 @@ struct CAT_Product {
   };
 };
 
+struct CAT_Product *cat_product_new_tuple(struct CAT_Tuple *v);
+struct CAT_Product *cat_product_new_list(struct CAT_List *v);
+struct CAT_Product *cat_product_new_set(struct CAT_Set *v);
+struct CAT_Product *cat_product_new_record(struct CAT_Record *v);
+
 struct CAT_Tuple {
   struct CAT_Type *ty1;
   struct CAT_Type *ty2;
@@ -94,10 +107,15 @@ struct CAT_Tuple {
   bool optional;
 };
 
+struct CAT_Tuple *cat_tuple_new(struct CAT_Type *ty1, struct CAT_Type *ty2,
+                                bool optional);
+
 struct CAT_List {
   struct CAT_Type *ls_type;
   bool optional;
 };
+
+struct CAT_List *cat_list_new(struct CAT_Type *ls_type, bool optional);
 
 struct CAT_Set {
   size_t arity;
@@ -105,16 +123,24 @@ struct CAT_Set {
   bool optional;
 };
 
+struct CAT_Set *cat_set_new(size_t arity, struct CAT_Type *types,
+                            bool optional);
+
 struct CAT_Record {
   size_t arity;
   struct CAT_Item *items;
   bool optional;
 };
 
+struct CAT_Record *cat_record_new(size_t arity, struct CAT_Item *items,
+                                  bool optional);
+
 struct CAT_Sum {
   size_t arity;
   struct CAT_Variant *variants;
 };
+
+struct CAT_Sum *cat_sum_new(size_t arity, struct CAT_Variant *variants);
 
 struct CAT_Variant {
   struct CAT_Ident *name;
@@ -123,10 +149,18 @@ struct CAT_Variant {
   struct CAT_Variant *next;
 };
 
+struct CAT_Variant *cat_variant_new(struct CAT_Ident *name,
+                                    struct CAT_Type *value);
+struct CAT_Variant *cat_variant_append(struct CAT_Variant **head,
+                                       struct CAT_Variant *append);
+
 struct CAT_Functor {
   size_t num_data;
   struct CAT_Type *data;
   void (*transformer_fn)(void *);
 };
+
+struct CAT_Functor *cat_functor_new(size_t num_data, struct CAT_Type *data,
+                                    void (*transformer_fn)(void *));
 
 #endif /* Cat.h */
