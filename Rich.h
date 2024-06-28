@@ -132,17 +132,18 @@ struct RICH_Variable *new_rich_variable_constructor(struct RICH_Repr *repr);
 struct RICH_Application {
   struct RICH_Expr *subj;
   struct RICH_Expr *obj;
-
-  enum {
-    REL_Surjective,
-    REL_Injective,
-  } rel;
 };
+
+struct RICH_Application *new_rich_application(struct RICH_Expr *subj,
+                                              struct RICH_Expr *obj);
 
 struct RICH_Abstraction {
   struct RICH_Pattern *patt;
   struct RICH_Expr *abs;
 };
+
+struct RICH_Abstraction *new_rich_abstraction(struct RICH_Pattern *patt,
+                                              struct RICH_Expr *abs);
 
 struct RICH_Let {
   struct RICH_Pattern *rhs;
@@ -152,11 +153,22 @@ struct RICH_Let {
   struct RICH_Let *next;
 };
 
+struct RICH_Let *new_rich_let(struct RICH_Pattern *rhs, struct RICH_Expr *lhs,
+                              struct RICH_Expr *in);
+
+struct RICH_Let *rich_let_append(struct RICH_Let **head,
+                                 struct RICH_Let *append);
+void rich_let_iter(struct RICH_Let *head, void (*iter_fn)(struct RICH_Let *));
+void rich_let_delete(struct RICH_Let *v);
+
 struct RICH_Letrec {
   struct RICH_Let *lets;
   size_t num_lets;
   struct RICH_Let *in;
 };
+
+struct RICH_Letrect *new_rich_letrch(struct RICH_Let *lets, size_t num_lets,
+                                     struct RICH_Lets *in);
 
 struct RICH_Infix {
   struct RICH_Expr *left;
@@ -164,14 +176,21 @@ struct RICH_Infix {
   struct RICH_Repr *fatbar;
 };
 
+struct RICH_Infix *new_rich_infix(struct RICH_Expr *left,
+                                  struct RICH_Expr *ight,
+                                  struct RICH_Repr *fatbar);
+
 struct RICH_Case {
   struct RICH_Variable *discrim;
   struct RICH_Pattern *patts;
   size_t num_patts;
 };
 
+struct RICH_Case *new_rich_case(struct RICH_Variable *var,
+                                struct RICH_Pattern *patt, size_t num_patts);
+
 struct RICH_Pattern {
-  enum {
+  enum PATT_Type {
     PATT_Const,
     PATT_Variable,
     PATT_Cons,
@@ -182,5 +201,15 @@ struct RICH_Pattern {
 
   struct RICH_Pattern *next;
 };
+
+struct RICH_Pattern *new_rich_pattern(enum PATT_Type tyy,
+                                      struct RICH_Expr *expr1,
+                                      struct RICH_Expr *expr2);
+
+struct RICH_Expr *rich_pattern_append(struct RICH_Expr **head,
+                                      struct RICH_Expr *append);
+void rich_pattern_iter(struct RICH_Pattern *head,
+                       void (*iter_fn)(struct RICH_Pattern));
+void rich_pattern_delte(struct RICH_Pattern *v);
 
 #endif /* Rich.h */
