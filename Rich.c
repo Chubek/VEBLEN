@@ -1,7 +1,7 @@
 #include "Rich.h"
 
 struct RICH_Repr *rich_repr_create(uint8_t *buffer, size_t buf_length) {
-  struct RICH_Repr *repr = ABSYN_ALLOC(sizeof(struct RICH_Repr));
+  struct RICH_Repr *repr = RICH_ALLOC(sizeof(struct RICH_Repr));
   if (repr == NULL) {
     return NULL;
   }
@@ -16,7 +16,7 @@ struct RICH_Repr *rich_repr_create(uint8_t *buffer, size_t buf_length) {
 struct RICH_Repr *rich_repr_concat(struct RICH_Repr *repr1,
                                    struct RICH_Repr *repr2) {
   size_t total_length = repr1->buf_length + repr2->buf_length;
-  uint8_t *new_buffer = (uint8_t *)ABSYN_ALLOC(total_length);
+  uint8_t *new_buffer = (uint8_t *)RICH_ALLOC(total_length);
   if (new_buffer == NULL) {
     return NULL;
   }
@@ -26,7 +26,7 @@ struct RICH_Repr *rich_repr_concat(struct RICH_Repr *repr1,
 
   struct RICH_Repr *concatenated = rich_repr_create(new_buffer, total_length);
   if (concatenated == NULL) {
-    ABSYN_FREE(new_buffer);
+    RICH_FREE(new_buffer);
     return NULL;
   }
 
@@ -66,8 +66,8 @@ void rich_repr_delete(struct RICH_Repr *repr) {
   struct RICH_Repr *current = repr;
   while (current != NULL) {
     struct RICH_Repr *next = current->next;
-    ABSYN_FREE(current->buffer);
-    ABSYN_FREE(current);
+    RICH_FREE(current->buffer);
+    RICH_FREE(current);
     current = next;
   }
 }
@@ -84,7 +84,8 @@ struct RICH_Expr *new_rich_expr_constant(struct RICH_Const *v) {
 }
 
 struct RICH_Expr *new_rich_expr_variable(struct RICH_Variable *v) {
-  struct RICH_Expr *expr = (struct RICH_Expr *)malloc(sizeof(struct RICH_Expr));
+  struct RICH_Expr *expr =
+      (struct RICH_Expr *)RICH_ALLOC(sizeof(struct RICH_Expr));
   if (expr != NULL) {
     expr->kind = RICHXP_Variable;
     expr->v_variable = v;
@@ -94,7 +95,8 @@ struct RICH_Expr *new_rich_expr_variable(struct RICH_Variable *v) {
 }
 
 struct RICH_Expr *new_rich_expr_application(struct RICH_Application *v) {
-  struct RICH_Expr *expr = (struct RICH_Expr *)malloc(sizeof(struct RICH_Expr));
+  struct RICH_Expr *expr =
+      (struct RICH_Expr *)RICH_ALLOC(sizeof(struct RICH_Expr));
   if (expr != NULL) {
     expr->kind = RICHXP_Application;
     expr->v_application = v;
@@ -104,7 +106,8 @@ struct RICH_Expr *new_rich_expr_application(struct RICH_Application *v) {
 }
 
 struct RICH_Expr *new_rich_expr_abstraction(struct RICH_Abstraction *v) {
-  struct RICH_Expr *expr = (struct RICH_Expr *)malloc(sizeof(struct RICH_Expr));
+  struct RICH_Expr *expr =
+      (struct RICH_Expr *)RICH_ALLOC(sizeof(struct RICH_Expr));
   if (expr != NULL) {
     expr->kind = RICHXP_Abstraction;
     expr->v_abstraction = v;
@@ -114,7 +117,8 @@ struct RICH_Expr *new_rich_expr_abstraction(struct RICH_Abstraction *v) {
 }
 
 struct RICH_Expr *new_rich_expr_let(struct RICH_Let *v) {
-  struct RICH_Expr *expr = (struct RICH_Expr *)malloc(sizeof(struct RICH_Expr));
+  struct RICH_Expr *expr =
+      (struct RICH_Expr *)RICH_ALLOC(sizeof(struct RICH_Expr));
   if (expr != NULL) {
     expr->kind = RICHXP_Let;
     expr->v_let = v;
@@ -124,7 +128,8 @@ struct RICH_Expr *new_rich_expr_let(struct RICH_Let *v) {
 }
 
 struct RICH_Expr *new_rich_expr_letrec(struct RICH_Letrec *v) {
-  struct RICH_Expr *expr = (struct RICH_Expr *)malloc(sizeof(struct RICH_Expr));
+  struct RICH_Expr *expr =
+      (struct RICH_Expr *)RICH_ALLOC(sizeof(struct RICH_Expr));
   if (expr != NULL) {
     expr->kind = RICHXP_Letrec;
     expr->v_letrec = v;
@@ -134,7 +139,8 @@ struct RICH_Expr *new_rich_expr_letrec(struct RICH_Letrec *v) {
 }
 
 struct RICH_Expr *new_rich_expr_infix(struct RICH_Infix *v) {
-  struct RICH_Expr *expr = (struct RICH_Expr *)malloc(sizeof(struct RICH_Expr));
+  struct RICH_Expr *expr =
+      (struct RICH_Expr *)RICH_ALLOC(sizeof(struct RICH_Expr));
   if (expr != NULL) {
     expr->kind = RICHXP_Infix;
     expr->v_infix = v;
@@ -144,7 +150,8 @@ struct RICH_Expr *new_rich_expr_infix(struct RICH_Infix *v) {
 }
 
 struct RICH_Expr *new_rich_expr_case(struct RICH_Case *v) {
-  struct RICH_Expr *expr = (struct RICH_Expr *)malloc(sizeof(struct RICH_Expr));
+  struct RICH_Expr *expr =
+      (struct RICH_Expr *)RICH_ALLOC(sizeof(struct RICH_Expr));
   if (expr != NULL) {
     expr->kind = RICHXP_Case;
     expr->v_case = v;
@@ -154,7 +161,8 @@ struct RICH_Expr *new_rich_expr_case(struct RICH_Case *v) {
 }
 
 struct RICH_Expr *new_rich_expr_pattern(struct RICH_Pattern *v) {
-  struct RICH_Expr *expr = (struct RICH_Expr *)malloc(sizeof(struct RICH_Expr));
+  struct RICH_Expr *expr =
+      (struct RICH_Expr *)RICH_ALLOC(sizeof(struct RICH_Expr));
   if (expr != NULL) {
     expr->kind = RICHXP_Pattern;
     expr->v_pattern = v;

@@ -49,8 +49,8 @@ struct ABSYN_Repr *absyn_repr_append(struct ABSYN_Repr **head,
   return *head;
 }
 
-void absyn_repr_iter(struct ABSYN_Repr *head, 
-		void (*iter_fn)(struct ABSYN_Repr*)) {
+void absyn_repr_iter(struct ABSYN_Repr *head,
+                     void (*iter_fn)(struct ABSYN_Repr *)) {
   struct ABSYN_Repr *current = head;
   while (current != NULL) {
     iter_fn(current);
@@ -802,4 +802,3 @@ void absyn_node_delete(struct ABSYN_Node *v) {
     current = next;
   }
 }
-
