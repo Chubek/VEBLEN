@@ -1,6 +1,6 @@
 #include "Token.h"
 
-struct TOKEN_Repr *absyn_repr_create(uint8_t *buffer, size_t buf_length) {
+struct TOKEN_Repr *token_repr_create(uint8_t *buffer, size_t buf_length) {
   struct TOKEN_Repr *repr = TOKEN_ALLOC(sizeof(struct TOKEN_Repr));
   if (repr == NULL) {
     return NULL;
@@ -13,7 +13,7 @@ struct TOKEN_Repr *absyn_repr_create(uint8_t *buffer, size_t buf_length) {
   return repr;
 }
 
-struct TOKEN_Repr *absyn_repr_concat(struct TOKEN_Repr *repr1,
+struct TOKEN_Repr *token_repr_concat(struct TOKEN_Repr *repr1,
                                      struct TOKEN_Repr *repr2) {
   size_t total_length = repr1->buf_length + repr2->buf_length;
   uint8_t *new_buffer = (uint8_t *)TOKEN_ALLOC(total_length);
@@ -24,7 +24,7 @@ struct TOKEN_Repr *absyn_repr_concat(struct TOKEN_Repr *repr1,
   memcpy(new_buffer, repr1->buffer, repr1->buf_length);
   memcpy(new_buffer + repr1->buf_length, repr2->buffer, repr2->buf_length);
 
-  struct TOKEN_Repr *concatenated = absyn_repr_create(new_buffer, total_length);
+  struct TOKEN_Repr *concatenated = token_repr_create(new_buffer, total_length);
   if (concatenated == NULL) {
     TOKEN_FREE(new_buffer);
     return NULL;
@@ -33,7 +33,7 @@ struct TOKEN_Repr *absyn_repr_concat(struct TOKEN_Repr *repr1,
   return concatenated;
 }
 
-struct TOKEN_Repr *absyn_repr_append(struct TOKEN_Repr **head,
+struct TOKEN_Repr *token_repr_append(struct TOKEN_Repr **head,
                                      struct TOKEN_Repr *append) {
   if (*head == NULL) {
     *head = append;
@@ -49,7 +49,7 @@ struct TOKEN_Repr *absyn_repr_append(struct TOKEN_Repr **head,
   return *head;
 }
 
-void absyn_repr_iter(struct TOKEN_Repr *head,
+void token_repr_iter(struct TOKEN_Repr *head,
                      void (*iter_fn)(struct TOKEN_Repr *)) {
   struct TOKEN_Repr *current = head;
   while (current != NULL) {
@@ -58,11 +58,11 @@ void absyn_repr_iter(struct TOKEN_Repr *head,
   }
 }
 
-void absyn_repr_print(struct TOKEN_Repr *repr) {
+void token_repr_print(struct TOKEN_Repr *repr) {
   printf("%.*s", (int)repr->buf_length, repr->buffer);
 }
 
-void absyn_repr_delete(struct TOKEN_Repr *repr) {
+void token_repr_delete(struct TOKEN_Repr *repr) {
   struct TOKEN_Repr *current = repr;
   while (current != NULL) {
     struct TOKEN_Repr *next = current->next;
@@ -71,11 +71,6 @@ void absyn_repr_delete(struct TOKEN_Repr *repr) {
     current = next;
   }
 }
-
-#include "Parser.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 struct TOKEN_Meta *token_meta_new_dec_integer(struct TOKEN_Repr *v) {
   struct TOKEN_Meta *meta = TOKEN_ALLOC(sizeof(struct TOKEN_Meta));

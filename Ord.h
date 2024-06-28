@@ -30,18 +30,17 @@ struct ORD_Repr {
   struct ORD_Repr *next;
 };
 
-struct ORD_Symtab {
-  uint64_t sym_tash;
-
-  struct ORD_Key *key;
-  struct ORD_Expr *value;
-
-  struct ORD_Symtab *next;
-};
+struct ORD_Repr *ord_repr_create(uint8_t *buffer, size_t buf_length);
+struct ORD_Repr *ord_repr_concat(struct ORD_Repr *repr1,
+                                 struct ORD_Repr *repr2);
+struct TOKNE_Repr *ord_repr_append(struct ORD_Repr **head,
+                                   struct ORD_Repr *append);
+void ord_repr_iter(struct ORD_Repr *head, void (*iter_fn)(struct ORD_Repr *));
+void ord_repr_print(struct ORD_Repr *repr);
+void ord_repr_delete(struct ORD_Repr *repr);
 
 struct ORD_Expr {
   struct ORD_Ident *name;
-  struct ORD_Symtab **static_link;
 
   enum {
     ORDXP_Atom,
@@ -61,6 +60,16 @@ struct ORD_Expr {
   struct ORD_Expr *next;
 };
 
+struct ORD_Expr *new_ord_expr_atom(struct ORD_Atom *v);
+struct ORD_Expr *new_ord_expr_composite(struct ORD_Composite *v);
+struct ORD_Expr *new_ord_expr_abstrction(struct ORD_Abstrction *v);
+struct ORD_Expr *new_ord_expr_application(struct ORD_Application *v);
+
+struct ORD_Expr *ord_expr_append(struct ORD_Expr **head,
+                                 struct ORD_Expr *append);
+void ord_expr_iter(struct ORD_Expr *head, void (*iter_fn)(struct ORD_Expr *));
+void ord_expr_delete(struct ORD_Expr *v);
+
 struct ORD_Atom {
   enum {
     ATOM_Number,
@@ -76,25 +85,41 @@ struct ORD_Atom {
   struct ORD_Atom *next;
 };
 
+struct ORD_Atom *ord_atom_new_number(struct ORD_Repr *v);
+struct ORD_Atom *ord_atom_new_char(struct ORD_Repr *v);
+struct ORD_Atom *ord_atom_new_string(struct ORD_Repr *v);
+struct ORD_Atom *ord_atom_new_ident(struct ORD_Repr *v);
+
+struct ORD_Atom *ord_atom_append(struct ORD_Atom **head,
+                                 struct ORD_Atom *append);
+void ord_atom_iter(struct ORD_Atom *head, void (*iter_fn)(struct ORD_Atom *));
+void ord_atom_delete(struct ORD_Atom *v);
+
 struct ORD_Composite {
   size_t arity;
   bool is_body;
   struct ORD_Item *items;
 };
 
+struct ORD_Composite *ord_composite_new(size_t arity, bool is_body,
+                                        struct ORD_Item *items);
+
 struct ORD_Application {
   struct ORD_Atom *arguments;
   struct ORD_Expr *body;
 };
 
+struct ORD_Application *ord_application_new(struct ORD_Atom *arguments,
+                                            struct ORD_Expr *body);
+
 struct ORD_Abstraction {
-  enum {
+  enum ABS_Type {
     ABS_Alpha,
     ABS_Beta,
     ABS_Eta,
   } kind;
 
-  enum {
+  enum REDEX_Type {
     REDEX_Normal,
     REDEX_Reduction,
     REDEX_Conversion,
@@ -104,4 +129,9 @@ struct ORD_Abstraction {
   struct ORD_Expr *object;
 };
 
-#endif
+struct ORD_Abstraction *ord_abstraction_new(enum ABS_Type kind,
+                                            enum REDEX_Type state,
+                                            struct ORD_Expr *subject,
+                                            struct ORD_Expr *object);
+
+#endif /* Ord.h */
